@@ -5,30 +5,31 @@ var Home = location.href,
 
 var Diaspora = {
     L: function(url, f, err) {
-        if (url == xhrUrl) {
-            return false;
-        }
-        xhrUrl = url;
-        if (xhr) {
-            xhr.abort();
-        }
-        xhr = $.ajax({
-            type: 'GET',
-            url: url,
-            timeout: 10000,
-            success: function(data) {
-                f(data);
-                xhrUrl = '';
-            },
-            error: function(a, b, c) {
-                if (b == 'abort') {
-                    err && err()
-                } else {
-                    window.location.href = url;
-                }
-                xhrUrl = '';
-            }
-        });
+        window.location.href = url;
+        // if (url == xhrUrl) {
+        //     return false;
+        // }
+        // xhrUrl = url;
+        // if (xhr) {
+        //     xhr.abort();
+        // }
+        // xhr = $.ajax({
+        //     type: 'GET',
+        //     url: url,
+        //     timeout: 10000,
+        //     success: function(data) {
+        //         f(data);
+        //         xhrUrl = '';
+        //     },
+        //     error: function(a, b, c) {
+        //         if (b == 'abort') {
+        //             err && err()
+        //         } else {
+        //             window.location.href = url;
+        //         }
+        //         xhrUrl = '';
+        //     }
+        // });
     },
     P: function() {
         return !!('ontouchstart' in window);
@@ -105,6 +106,13 @@ var Diaspora = {
                     comment.click();
                 }
             }, 0)
+
+            if (window.dplayers) {
+                for (let i = 0; i < window.dplayers.length; i++) {
+                    window.dplayers[i].destroy();
+                }
+                window.dplayers = [];
+            }
         })
     },
     preview: function() {
@@ -469,7 +477,7 @@ $(function() {
                 return false;
                 break;
               // comment
-            case - 1 != tag.indexOf("comment"): 
+            case - 1 != tag.indexOf("comment"):
                 Diaspora.loading(),
                 comment = $('#gitalk-container');
                 gitalk = new Gitalk({
@@ -498,4 +506,14 @@ $(function() {
     }
     console.log("%c Github %c","background:#24272A; color:#ffffff","","https://github.com/Fechin/hexo-theme-diaspora")
 })
+
+
+$(document).on('pjax:start', function () {
+    if (window.dplayers) {
+        for (let i = 0; i < window.dplayers.length; i++) {
+            window.dplayers[i].destroy();
+        }
+        window.dplayers = [];
+    }
+});
 
